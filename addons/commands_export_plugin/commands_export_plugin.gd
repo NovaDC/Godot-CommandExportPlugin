@@ -71,18 +71,36 @@ func _get_export_options(platform):
 		}
 	]
 
+static func _normalize_export_path(path:String) -> String:
+	var dir_or_file := ProjectSettings.globalize_path("res://").rstrip("/") + "/" + path.lstrip(".").lstrip("/").get_base_dir()
+	return dir_or_file
+	
+
+static func _wrap_command(command:String = "", args:Array = [], cwd:String = "") -> String:
+	if command.is_empty():
+		return ""
+	
+	var com := ""
+	if not cwd.is_empty():
+		com += "cd %s &&" % [cwd]
+	com += " %s " % [command]
+	com += " ".join(args)
+	return com.strip_edges()
+
 func _export_begin_tool(features, is_debug, path, flags):
 	if get_option("project_export_commands/run_commands"):
 		for command in get_option("project_export_commands/pre_processing_commands"):
-			await NovaTools.launch_external_command_async(command[0],
-														  command.slice(1),
+			var com := _wrap_command(command[0], command.slice(1), _normalize_export_path(path))
+			await NovaTools.launch_external_command_async(com,
+														  [],
 														  get_option("project_export_commands/keep_open")
 														 )
 
 func _export_end_tool(features, is_debug, path, flags):
 	if get_option("project_export_commands/run_commands"):
 		for command in get_option("project_export_commands/post_processing_commands"):
-			await NovaTools.launch_external_command_async(command[0],
-														  command.slice(1),
+			var com := _wrap_command(command[0], command.slice(1), _normalize_export_path(path))
+			await NovaTools.launch_external_command_async(com,
+														  [],
 														  get_option("project_export_commands/keep_open")
 														 )
