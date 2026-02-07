@@ -26,7 +26,24 @@ const COMMAND_SUBSTITUTION_TYPES:Array[StringName] = ["Export Path",
 														"Comma Joined Features"
 														]
 
-static func _format_command(command:Variant, subs:Dictionary = {}) -> String:
+## Formats the provided [param command] into a proper command string,
+## ensuring that each section of the command is properly substituted with [param subs].
+## This substitution uses the same format as [method String.format].[br]
+## [br]
+## Whitespace on the edges of the string will be stripped.[br]
+## [br]
+## [param command] is generally processed into a list of strings before
+## substitution is applied to each entry.[br]
+## It's suggested to specifically use a [PackedStringArray] or [Array]
+## in order to have control over how the command is split.[br]
+## [br]
+## If [param command] is a [String], [StringName], or [NodePath], it will be casted to a [String]
+## then split at every space (if not spaces are in the string, it is still processed).
+## If [param command] is instead a [Array], each element is casted to a string.
+## If [param command] is not already handled by some method mentioned above,
+## and if it is not a [PackedStringArray]
+## then an empty string is returned.
+static func format_command(command:Variant, subs:Dictionary = {}) -> String:
 	var command_parts := []
 	match typeof(command):
 		TYPE_NIL:
@@ -48,7 +65,7 @@ static func _format_command(command:Variant, subs:Dictionary = {}) -> String:
 			else:
 				command_parts = [command]
 		_:
-			push_warning("Export command is bad type: %s. Skipping..." % [type_string(typeof(command))])
+			push_warning("Export command is bad type: %s." % [type_string(typeof(command))])
 			return ""
 
 	command_parts = command_parts.map(func (s): return s.format(subs))
@@ -203,7 +220,7 @@ func _run_command_list(command_list:Variant,
 					push_warning("Command substitution type of '%s' not supported." % [sub_types[sub]])
 
 	for command in command_list:
-		var com := _format_command(command, subs)
+		var com := format_command(command, subs)
 		if com.is_empty():
 			continue
 		var keep_open = get_option(OPTION_PREFIX + "keep_open")
