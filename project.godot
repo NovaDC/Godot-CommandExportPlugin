@@ -19,6 +19,14 @@ config/version="2.0.0.0"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://addons/commands_export_plugin/icon.svg"
 
+[autoload]
+
+TreeWatcher="*uid://byto6ql37kfie"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/commands_export_plugin/plugin.cfg", "res://addons/novatools/plugin.cfg")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
