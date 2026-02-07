@@ -21,9 +21,14 @@ func _get_export_features(platform: EditorExportPlatform, debug: bool) -> Packed
 	return PackedStringArray(["exportcommands"])
 
 func _supports_platform(platform:EditorExportPlatform):
-	return ((not platform.is_class("EditorExportPlatformExtension")) or
-			EXTRA_SUPPORTED_CLASSES_NAMES.any(func (n): return platform.is_class(n))
-		   )
+	if platform.is_class("EditorExportPlatformWeb"):
+		# For some reason, web exports have a history of strange bugs with their post exporting methods. This is the temporary solution for this until godot patched this.
+		return false
+
+	if platform.is_class("EditorExportPlatformExtension"):
+		return EXTRA_SUPPORTED_CLASSES_NAMES.any(func (n): return platform.is_class(n))
+
+	return true
 
 func _get_export_option_visibility(platform: EditorExportPlatform, option: String) -> bool:
 	if (not get_option("project_export_commands/run_commands") and
