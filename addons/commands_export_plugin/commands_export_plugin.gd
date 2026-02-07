@@ -96,6 +96,8 @@ func _get_export_features(platform:EditorExportPlatform, _debug := false) -> Pac
 func _get_export_options(platform):
 	if not _supports_platform(platform):
 		return []
+	var ver_info := Engine.get_version_info()
+	var dict_hint_str:bool =  ver_info.major > 4 or (ver_info.major == 4 and ver_info.minor >= 5)
 	return [
 		{
 			"option" : {
@@ -134,12 +136,13 @@ func _get_export_options(platform):
 			"option" : {
 				"name": OPTION_PREFIX + "command_text_substitution",
 				"type": TYPE_DICTIONARY,
-				"hint": PROPERTY_HINT_TYPE_STRING,
-				"hint_string": "%d:;%d/%d:%s" % [TYPE_STRING,
+				"hint": PROPERTY_HINT_TYPE_STRING if dict_hint_str else PROPERTY_HINT_NONE,
+				"hint_string": "%d/%d:;%d/%d:%s" % [TYPE_STRING,
+													PROPERTY_HINT_MULTILINE_TEXT,
 													TYPE_STRING,
 													PROPERTY_HINT_ENUM,
 													",".join(COMMAND_SUBSTITUTION_TYPES)
-												],
+												] if dict_hint_str else "",
 			},
 			"default_value": {"CWD" : "Export Directory"}
 		}
@@ -205,6 +208,7 @@ func _run_command_list(command_list:Variant,
 	var sub_types = get_option(OPTION_PREFIX + "command_text_substitution")
 	if typeof(sub_types) == TYPE_DICTIONARY:
 		for sub in sub_types.keys():
+			sub = str(sub)
 			match (str(sub_types[sub]).to_lower().strip_edges()):
 				"export path":
 					subs[sub] = export_path
