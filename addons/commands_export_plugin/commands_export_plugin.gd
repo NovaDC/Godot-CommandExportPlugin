@@ -48,6 +48,7 @@ func _get_export_options(platform):
 				"type" : TYPE_BOOL,
 			},
 			"default_value" : false,
+			"update_visibility" : true,
 		},
 		{
 			"option" : {
