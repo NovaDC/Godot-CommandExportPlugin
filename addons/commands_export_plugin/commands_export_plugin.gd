@@ -141,7 +141,7 @@ func _get_export_options(platform):
 													",".join(COMMAND_SUBSTITUTION_TYPES)
 												],
 			},
-			"default_value": {"{CWD}" : "Export Directory"}
+			"default_value": {"CWD" : "Export Directory"}
 		}
 	]
 
