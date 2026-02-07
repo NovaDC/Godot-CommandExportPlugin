@@ -87,20 +87,21 @@ static func _wrap_command(command:String = "", args:Array = [], cwd:String = "")
 	com += " ".join(args)
 	return com.strip_edges()
 
+static func _run_command_list(command_list:Variant = null) -> void:
+	if not get_option("project_export_commands/run_commands"):
+		return
+
+	var cwd := _normalize_export_path(path)
+
+	for command in command_list:
+		var com := _wrap_command(command[0], command.slice(1), cwd)
+		var keep_open = get_option("project_export_commands/keep_open")
+		await NovaTools.launch_external_command_async(com, [], keep_open)
+
 func _export_begin_tool(features, is_debug, path, flags):
-	if get_option("project_export_commands/run_commands"):
-		for command in get_option("project_export_commands/pre_processing_commands"):
-			var com := _wrap_command(command[0], command.slice(1), _normalize_export_path(path))
-			await NovaTools.launch_external_command_async(com,
-														  [],
-														  get_option("project_export_commands/keep_open")
-														 )
+	var cmds = get_option("project_export_commands/pre_processing_commands")
+	_run_command_list(cmds)
 
 func _export_end_tool(features, is_debug, path, flags):
-	if get_option("project_export_commands/run_commands"):
-		for command in get_option("project_export_commands/post_processing_commands"):
-			var com := _wrap_command(command[0], command.slice(1), _normalize_export_path(path))
-			await NovaTools.launch_external_command_async(com,
-														  [],
-														  get_option("project_export_commands/keep_open")
-														 )
+	var cmds = get_option("project_export_commands/post_processing_commands")
+	_run_command_list(cmds)
