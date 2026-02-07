@@ -2,7 +2,10 @@
 @icon("./icon.svg")
 extends EditorPlugin
 
-const PLUGIN_NAME := "commands_export_plugin"
+const PLUGIN_NAME := "Commands Export Plugin"
+
+const PLUGIN_NAME_INTERNAL := "commands_export_plugin"
+
 const PLUGIN_ICON := preload("./icon.svg")
 
 var _current_inst:CommandsExportPlugin = null
