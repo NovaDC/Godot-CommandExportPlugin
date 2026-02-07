@@ -42,6 +42,32 @@ func _get_export_option_visibility(platform: EditorExportPlatform, option: Strin
 			return option != "project_export_commands/run_commands"
 	return true
 
+func _get_export_option_warning(platform: EditorExportPlatform, option: String) -> String:
+	if not _supports_platform(platform):
+		if get_option("project_export_commands/run_commands"):
+			return "Project Export Commands are still enabled spit this platform not being supported. You must update your export configuration manually to ensure this is removed."
+		return ""
+	
+	if not get_option("project_export_commands/run_commands"):
+		return ""
+	
+	match (option.trim_prefix("project_export_commands/")):
+		"command_text_substitution":
+			var sub_types = get_option("project_export_commands/command_text_substitution")
+			if typeof(sub_types) != TYPE_DICTIONARY:
+				return ""
+
+			var type_normaliser := func (s): return str(s).to_lower().strip_edges()
+
+			var normalised_valid_types:Array = COMMAND_SUBSTITUTION_TYPES.map(type_normaliser)
+			var invalids:Array = sub_types.values().map(type_normaliser).filter(func (t:String): return not normalised_valid_types.has(t))
+
+			if invalids.is_empty():
+				return ""
+			return "Command substitutions of type '" + "' and '".join(invalids) + "' is not supported."
+		_:
+			return ""
+
 func _get_export_options(platform):
 	if not _supports_platform(platform):
 		return []
