@@ -150,7 +150,7 @@ func _get_export_option_visibility(platform: EditorExportPlatform, option: Strin
 		return false
 	if not get_option(OPTION_PREFIX + "run_commands"):
 		if option.begins_with(OPTION_PREFIX):
-			return option != OPTION_PREFIX + "run_commands"
+			return option == OPTION_PREFIX + "run_commands"
 	return true
 
 func _get_export_option_warning(platform: EditorExportPlatform, option: String) -> String:
