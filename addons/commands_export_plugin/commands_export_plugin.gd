@@ -20,7 +20,9 @@ func _get_name() -> String:
 	#This must always come first in order for pre and post export commands to run properly.
 
 func _get_export_features(platform: EditorExportPlatform, debug: bool) -> PackedStringArray:
-	return PackedStringArray(["exportcommands"])
+	if _supports_platform(platform):
+		return PackedStringArray(["exportcommands"])
+	return PackedStringArray()
 
 func _supports_platform(platform:EditorExportPlatform):
 	if platform.is_class("EditorExportPlatformWeb"):
@@ -33,11 +35,11 @@ func _supports_platform(platform:EditorExportPlatform):
 	return true
 
 func _get_export_option_visibility(platform: EditorExportPlatform, option: String) -> bool:
-	if (not get_option("project_export_commands/run_commands") and
-		option.begins_with("project_export_commands/") and
-		option != "project_export_commands/run_commands"
-	   ):
+	if not _supports_platform(platform):
 		return false
+	if not get_option("project_export_commands/run_commands"):
+		if option.begins_with("project_export_commands/"):
+			return option != "project_export_commands/run_commands"
 	return true
 
 func _get_export_options(platform):
