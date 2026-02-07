@@ -100,7 +100,7 @@ func _get_export_options(platform):
 				"name": OPTION_PREFIX + "pre_processing_commands",
 				"type": TYPE_ARRAY,
 				"hint": PROPERTY_HINT_TYPE_STRING,
-				"hint_string": "%d:%d/%d"%[TYPE_ARRAY, TYPE_STRING, PROPERTY_HINT_MULTILINE_TEXT],
+				"hint_string": "%d:%d/%d:" % [TYPE_ARRAY, TYPE_STRING, PROPERTY_HINT_MULTILINE_TEXT],
 			},
 			"default_value": [["echo", "example"]]
 		},
@@ -109,7 +109,7 @@ func _get_export_options(platform):
 				"name": OPTION_PREFIX + "post_processing_commands",
 				"type": TYPE_ARRAY,
 				"hint": PROPERTY_HINT_TYPE_STRING,
-				"hint_string": "%d:%d/%d"%[TYPE_ARRAY, TYPE_STRING, PROPERTY_HINT_MULTILINE_TEXT],
+				"hint_string": "%d:%d/%d:" % [TYPE_ARRAY, TYPE_STRING, PROPERTY_HINT_MULTILINE_TEXT],
 			},
 			"default_value": [["echo", "example"]]
 		},
