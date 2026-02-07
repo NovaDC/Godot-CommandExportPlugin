@@ -8,6 +8,8 @@ extends ToolEditorExportPlugin
 ## A plugin using [ToolEditorExportPlugin] to provide the ability for CLI commands to be run during
 ## export. Requires the NovaTools plugin as a dependency.
 
+const OPTION_PREFIX := "project_export_commands/"
+
 ## A list of class names that inherit form [EditorExportPlatformExtension]
 ## but should be supported by this plugin.
 const EXTRA_SUPPORTED_CLASSES_NAMES := ["SourceEditorExportPlatform", "VideoEditorExportPlatform"]
@@ -37,23 +39,23 @@ func _supports_platform(platform:EditorExportPlatform):
 func _get_export_option_visibility(platform: EditorExportPlatform, option: String) -> bool:
 	if not _supports_platform(platform):
 		return false
-	if not get_option("project_export_commands/run_commands"):
-		if option.begins_with("project_export_commands/"):
-			return option != "project_export_commands/run_commands"
+	if not get_option(OPTION_PREFIX + "run_commands"):
+		if option.begins_with(OPTION_PREFIX):
+			return option != OPTION_PREFIX + "run_commands"
 	return true
 
 func _get_export_option_warning(platform: EditorExportPlatform, option: String) -> String:
 	if not _supports_platform(platform):
-		if get_option("project_export_commands/run_commands"):
+		if get_option(OPTION_PREFIX + "run_commands"):
 			return "Project Export Commands are still enabled spit this platform not being supported. You must update your export configuration manually to ensure this is removed."
 		return ""
 	
-	if not get_option("project_export_commands/run_commands"):
+	if not get_option(OPTION_PREFIX + "run_commands"):
 		return ""
 	
-	match (option.trim_prefix("project_export_commands/")):
+	match (option.trim_prefix(OPTION_PREFIX)):
 		"command_text_substitution":
-			var sub_types = get_option("project_export_commands/command_text_substitution")
+			var sub_types = get_option(OPTION_PREFIX + "command_text_substitution")
 			if typeof(sub_types) != TYPE_DICTIONARY:
 				return ""
 
@@ -74,7 +76,7 @@ func _get_export_options(platform):
 	return [
 		{
 			"option" : {
-				"name" : "project_export_commands/run_commands",
+				"name" : OPTION_PREFIX + "run_commands",
 				"type" : TYPE_BOOL,
 			},
 			"default_value" : false,
@@ -82,14 +84,14 @@ func _get_export_options(platform):
 		},
 		{
 			"option" : {
-				"name" : "project_export_commands/keep_open",
+				"name" : OPTION_PREFIX + "keep_open",
 				"type" : TYPE_BOOL,
 			},
 			"default_value" : true,
 		},
 		{
 			"option" : {
-				"name": "project_export_commands/pre_processing_commands",
+				"name": OPTION_PREFIX + "pre_processing_commands",
 				"type": TYPE_ARRAY,
 				"hint": PROPERTY_HINT_TYPE_STRING,
 				"hint_string": "%d:%d/%d"%[TYPE_ARRAY, TYPE_STRING, PROPERTY_HINT_MULTILINE_TEXT],
@@ -98,7 +100,7 @@ func _get_export_options(platform):
 		},
 		{
 			"option" : {
-				"name": "project_export_commands/post_processing_commands",
+				"name": OPTION_PREFIX + "post_processing_commands",
 				"type": TYPE_ARRAY,
 				"hint": PROPERTY_HINT_TYPE_STRING,
 				"hint_string": "%d:%d/%d"%[TYPE_ARRAY, TYPE_STRING, PROPERTY_HINT_MULTILINE_TEXT],
@@ -107,7 +109,7 @@ func _get_export_options(platform):
 		},
 		{
 			"option" : {
-				"name": "project_export_commands/command_text_substitution",
+				"name": OPTION_PREFIX + "command_text_substitution",
 				"type": TYPE_DICTIONARY,
 				"hint": PROPERTY_HINT_TYPE_STRING,
 				"hint_string": "%d:;%d/%d:%s" % [TYPE_STRING, TYPE_STRING, PROPERTY_HINT_ENUM, ",".join(COMMAND_SUBSTITUTION_TYPES)],
@@ -146,14 +148,14 @@ static func _format_command(command:Variant, subs:Dictionary = {}) -> String:
 	return " ".join(command_parts).strip_edges()
 
 func _run_command_list(command_list:Variant, features:PackedStringArray, is_debug:bool, path:String, flags:int) -> void:
-	if not get_option("project_export_commands/run_commands"):
+	if not get_option(OPTION_PREFIX + "run_commands"):
 		return
 
 	var export_path := NovaTools.normalize_path_absolute(path, false)
 	var export_dir := NovaTools.normalize_path_absolute(path, false).get_base_dir()
 
 	var subs := {}
-	var sub_types = get_option("project_export_commands/command_text_substitution")
+	var sub_types = get_option(OPTION_PREFIX + "command_text_substitution")
 	if typeof(sub_types) == TYPE_DICTIONARY:
 		for sub in sub_types.keys():
 			match (str(sub_types[sub]).to_lower().strip_edges()):
@@ -174,13 +176,13 @@ func _run_command_list(command_list:Variant, features:PackedStringArray, is_debu
 		var com := _format_command(command, subs)
 		if com.is_empty():
 			continue
-		var keep_open = get_option("project_export_commands/keep_open")
+		var keep_open = get_option(OPTION_PREFIX + "keep_open")
 		await NovaTools.launch_external_command_async(com, [], keep_open)
 
 func _export_begin_tool(features, is_debug, path, flags):
-	var cmds = get_option("project_export_commands/pre_processing_commands")
+	var cmds = get_option(OPTION_PREFIX + "pre_processing_commands")
 	_run_command_list(cmds, features, is_debug, path, flags)
 
 func _export_end_tool(features, is_debug, path, flags):
-	var cmds = get_option("project_export_commands/post_processing_commands")
+	var cmds = get_option(OPTION_PREFIX + "post_processing_commands")
 	_run_command_list(cmds, features, is_debug, path, flags)
