@@ -14,8 +14,13 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Project Export Commands"
-config/version="2.0.0.0"
+config/name="Commands Export Plugin"
+config/name_localized={
+"en": "Command Export Plugin"
+}
+config/description="A export plugin using ToolEditorExportPlugin to provide the ability for full CLI shell commands to be run during export.
+Requires the NovaTools plugin as a dependency."
+config/version="v3.0.0.0"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 boot_splash/image="uid://cx3lf16es7jjj"
 config/icon="uid://blvnkioh6gakk"
@@ -27,6 +32,10 @@ TreeWatcher="*uid://byto6ql37kfie"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/commands_export_plugin/plugin.cfg", "res://addons/novatools/plugin.cfg")
+
+[internationalization]
+
+locale/locale_filter_mode=0
 
 [rendering]
 

@@ -1,7 +1,7 @@
-# Godot Editor Export Commands
+# Godot-CommandExportPlugin
 
-A Godot plugin making it easy to have command line comands run during export of projects.
+A export plugin using [ToolEditorExportPlugin](https://github.com/NovaDC/Godot-Novatools/blob/0a663b3e6f371f6bbe4116c31eaac0853da32cab/addons/novatools/tool_editor_export_plugin.gd "ToolEditorExportPlugin's script as hosted on Github") to provide the ability for full CLI shell commands to be run during export.
 
-## ``CommandExportPlugin``
+Requires the [NovaTools](https://github.com/NovaDC/Godot-Novatools "NovaTools Github Repository") plugin as a dependency.
 
-``CommandExportPlugin`` is a simple editor plugin that runs specific commands set in the export settings during export, allowing for simpler commands to be run during export without having to extend ``EditorExportCommand``.
+![The CommandExportPlugin icon](./icon.png "Icon")

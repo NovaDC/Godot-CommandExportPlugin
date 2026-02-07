@@ -5,8 +5,10 @@ extends ToolEditorExportPlugin
 
 ## CommandsExportPlugin
 ##
-## A plugin using [ToolEditorExportPlugin] to provide the ability for CLI commands to be run during
-## export. Requires the NovaTools plugin as a dependency.
+## A export plugin using [ToolEditorExportPlugin] to provide the ability for full
+## CLI shell commands to be run during export.[br]
+## Requires the [NovaTools] plugin as a dependency.[br]
+## The [NovaTools] plugin does not need to be enabled.
 
 ## The prefix used for all export options provided by this plugin.
 const OPTION_PREFIX := "project_export_commands/"
