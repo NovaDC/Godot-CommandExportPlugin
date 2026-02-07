@@ -183,11 +183,11 @@ func _get_export_option_warning(platform: EditorExportPlatform, option: String) 
 
 func _export_begin_tool(features, is_debug, path, flags):
 	var cmds = get_option(OPTION_PREFIX + "pre_processing_commands")
-	_run_command_list(cmds, features, is_debug, path, flags)
+	await _run_command_list(cmds, features, is_debug, path, flags)
 
 func _export_end_tool(features, is_debug, path, flags):
 	var cmds = get_option(OPTION_PREFIX + "post_processing_commands")
-	_run_command_list(cmds, features, is_debug, path, flags)
+	await _run_command_list(cmds, features, is_debug, path, flags)
 
 func _run_command_list(command_list:Variant,
 						features:PackedStringArray,
@@ -225,3 +225,6 @@ func _run_command_list(command_list:Variant,
 			continue
 		var keep_open = get_option(OPTION_PREFIX + "keep_open")
 		await NovaTools.launch_external_command_async(com, [], keep_open)
+		# wait a frame to allow for tabbed terminal shells to launch fully
+		# without making an additional window
+		await Engine.get_main_loop().process_frame
